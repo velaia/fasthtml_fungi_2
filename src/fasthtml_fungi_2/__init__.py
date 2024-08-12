@@ -1,3 +1,4 @@
+import datetime
 from fasthtml.common import *
 from icecream import ic
 from dotenv import load_dotenv
@@ -8,28 +9,32 @@ from fasthtml_fungi_2.gps_utils import convert_coordinates_to_geojson
 
 load_dotenv()
 
-headers = (MarkdownJS(), HighlightJS(langs=['python', 'javascript', 'html', 'css']), )
+headers = (picolink, MarkdownJS(), HighlightJS(langs=['python', 'javascript', 'html', 'css']), )
 app, rt = fast_app(hdrs=headers)
 setup_toasts(app)
-db = database('data/observations.db')
+db = database('data/observation2.db')
 
 observations = db.t.observations
 if observations not in db.t:
-    observations.create(id=int, filename=str, created_at=str, note=str, pk='id')
+    observations.create(id=int, filename=str, created_at=str, note=str, longitude=float, latitude=float, pk='id')
 Observation = observations.dataclass()
 
 
 @rt("/")
 def get():
     return Title("Mushroom 🍄 Map"), Main(
-        H1("Mushroom 🍄 Map"),
+        H1("My Mushroom 🍄 Map"),
         P("The map displays your mushroom observations."),
-        A("Click to add new observation", href="/new-observation"),
-    )
+        P(A(Button("➕ Click to add new observation"), href="/new-observation")),
+        P("These are the mushroom observations so far:"),
+        Ul(
+            *[Li(f"{obs.filename} at {obs.created_at}", A("show on map")) for obs in observations()]
+            ),
+    cls="container")
 
 
 observation_markdown = """
-# Add a new observation
+# Add 🍄 Observation
 
 Please select the mushroom image for the observation. The photo should come with the GPS location where it has been taken in the metadata.
 
@@ -52,23 +57,34 @@ def get():
             enctype="multipart/form-data",
             accept="image/*",
         ),
-    )
+    cls="container")
 
 
 @rt("/new-observation")
 async def post(session, photo: str):
-    add_toast(session, "Photo upload successful", "success")
-    photo_content = await photo.read()
-    file_path = os.path.join(".", os.getenv('upload_path'), photo.filename)
-    with open(file_path, "wb") as output:
-        output.write(photo_content)
-    ic(type(photo))
+    try:
+        add_toast(session, "Photo upload successful", "success")
+        photo_content = await photo.read()
+        file_path = os.path.join(".", os.getenv('upload_path'), photo.filename)
+        with open(file_path, "wb") as output:
+            output.write(photo_content)
+        ic(type(photo))
 
-    exif_dict = piexif.load(file_path)
-    ic(exif_dict)
+        exif_dict = piexif.load(file_path)
+        ic(exif_dict)
+        assert 'GPS' in exif_dict, "No GPS data in the image metadata"
 
-    geojson = convert_coordinates_to_geojson(exif_dict)
-    ic(geojson)
+        geojson = convert_coordinates_to_geojson(exif_dict)
+        ic(geojson)
+
+        obs = Observation(filename=photo.filename, created_at=datetime.datetime.now().isoformat(), 
+                        note="New observation", longitude=geojson['coordinates'][1], latitude=geojson['coordinates'][0])
+        observations.insert(obs)
+    except Exception as e:
+        add_toast(session, f"Error: {e}", "error")
+        return Title("Error"), Main(H1("Error"), P(f"Error: {e}"),
+                                    P( A("Back to main page", href="/")),
+                                    cls="container")
 
     return Title("Successful Submission "), Main(
         H1("Information about Uploaded Photo"), Img(src=file_path, width="400")

@@ -1,6 +1,12 @@
 import json
 
 def convert_coordinates_to_geojson(data):
+    if 'GPS' not in data:
+        # throw exception
+        raise ValueError("No GPS data in the image metadata") 
+    elif len(data['GPS'].keys()) < 1:
+        raise ValueError("No GPS data in the image metadata") 
+    
     coordinates = {
         "type": "Point",
         "coordinates": [
@@ -8,7 +14,7 @@ def convert_coordinates_to_geojson(data):
             data['GPS'][4][0][0] + data['GPS'][4][1][0] / 60 + data['GPS'][4][2][0] / data['GPS'][4][2][1] / 3600,
         ]
     }
-    return json.dumps(coordinates)
+    return coordinates
 
 # Example usage
 data = {
