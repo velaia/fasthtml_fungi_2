@@ -105,7 +105,7 @@ def get(id:int):
     observation_js = f"""
 var map = new maplibregl.Map({{
     container: 'map',
-    style: 'https://tiles.stadiamaps.com/styles/alidade_smooth.json',  // Style URL; see our documentation for more options
+    style: 'https://tiles.stadiamaps.com/styles/outdoors.json',  // Style URL; see our documentation for more options
     center: [{obs.longitude}, {obs.latitude}],  // Initial focus coordinate
     zoom: 14
 }});

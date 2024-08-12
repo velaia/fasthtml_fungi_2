@@ -4,7 +4,8 @@ Pet project to explore a couple of tools I wanted to explore (for  a while) in c
 * [Answer.ai's FastHTML](https://fastht.ml/)
 * [Rye: a Hassle-Free Python Experience](https://rye.astral.sh/)
 * [GitHub Copilot](https://github.com/features/copilot)
-* [icecream](https://github.com/gruns/icecream) & [dotenv](https://github.com/theskumar/python-dotenv)
+* [🍦icecream](https://github.com/gruns/icecream) & [dotenv](https://github.com/theskumar/python-dotenv)
+* [🗺 Stadia Maps](https://www.stadiamaps.com)
 
 ## Description
 
