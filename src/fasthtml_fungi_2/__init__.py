@@ -12,14 +12,17 @@ load_dotenv()
 headers = (picolink, MarkdownJS(), HighlightJS(langs=['python', 'javascript', 'html', 'css']), 
            Script(type="text/javascript", src="https://unpkg.com/maplibre-gl@4.0.2/dist/maplibre-gl.js"),
            Link(rel="stylesheet", href="https://unpkg.com/maplibre-gl@4.0.2/dist/maplibre-gl.css"),
-           Link(rel="stylesheet", href="/static/style.css"),)
+           Link(rel="stylesheet", href="/static/style.css"),
+           Meta(name="viewport", content="width=device-width, initial-scale=1.0"),
+           Meta(name="color-scheme", content="dark light"),
+           Meta(name="charset", content="utf-8"),)
 app, rt = fast_app(hdrs=headers)
 setup_toasts(app)
 db = database('data/observation2.db')
 
 observations = db.t.observations
 if observations not in db.t:
-    observations.create(id=int, filename=str, created_at=str, note=str, longitude=float, latitude=float, pk='id')
+    observations.create(id=int, filename=str, species=str, created_at=str, note=str, longitude=float, latitude=float, pk='id')
 Observation = observations.dataclass()
 
 
@@ -31,7 +34,7 @@ def get(session):
         P(A(Button("➕ Click to add new observation"), href="/new-observation")),
         P("These are the mushroom observations so far:"),
         Ul(
-            *[Li(f"{obs.filename}", 
+            *[Li(f"{obs.species} - {obs.created_at}", 
                  A("Show on map", href=f"/observation/{obs.id}"), 
                  A("❌ Delete", href=f"/observation/delete/{obs.id}")) 
                 for obs in observations()]
@@ -56,6 +59,7 @@ async def get(session):
     return Title("New Observation"), Main(
         Div(observation_markdown, cls="marked"),
         Form(
+            Input(id="species", type="text", name="species", placeholder="Species name"),
             Input(id="photo", type="file", name="photo"),
             Button("Submit", type="submit"),
             action="/new-observation",
@@ -67,7 +71,7 @@ async def get(session):
 
 
 @rt("/new-observation")
-async def post(session, photo: str):
+async def post(session, photo: str, species: str):
     try:
         photo_content = await photo.read()
         file_path = os.path.join(".", os.getenv('upload_path'), photo.filename)
@@ -80,7 +84,12 @@ async def post(session, photo: str):
         geojson = convert_coordinates_to_geojson(exif_dict)
         ic(geojson["coordinates"])
 
-        obs = Observation(filename=photo.filename, created_at=datetime.datetime.now().isoformat(), 
+        # TODO: set created_at to date from EXIF data
+        exif_date = exif_dict['Exif'][36867].decode()
+        # parse exif_date
+        exif_date_parsed = datetime.datetime.strptime(exif_date, "%Y:%m:%d %H:%M:%S")
+
+        obs = Observation(filename=photo.filename, created_at=exif_date_parsed, species=species,
                         note="New observation", longitude=geojson['coordinates'][1], latitude=geojson['coordinates'][0])
         observations.insert(obs)
         add_toast(session, "Photo upload successful", "success")
@@ -100,12 +109,11 @@ async def get(fname:str, ext:str):
 @rt("/observation/{id}")
 def get(id:int):
     obs = observations[id]
-    ic(obs)
 
     observation_js = f"""
 var map = new maplibregl.Map({{
     container: 'map',
-    style: 'https://tiles.stadiamaps.com/styles/outdoors.json',  // Style URL; see our documentation for more options
+    style: 'https://tiles.stadiamaps.com/styles/stamen_terrain.json',  // Style URL; see our documentation for more options
     center: [{obs.longitude}, {obs.latitude}],  // Initial focus coordinate
     zoom: 14
 }});
@@ -152,13 +160,17 @@ markerCollection.features.forEach(function (point) {{
 }});
     """
 
-    return Title(f"Observation {obs.filename}"), Main(
-        H1(f"Observation {obs.filename}"),
-        P(f"Created at {obs.created_at} - Long/lat: {obs.longitude:.4f}, {obs.latitude:.4f}"),
-        P(Img(src=f"/static/uploads/{obs.filename}", width="400"), Div(id="map", style="height:400px; width:800px; position:relative;"), ),
-        P(A("Back to main page", href="/"),),
+    return Titled(f"Observation: {obs.species}",
+                  
+        Div(A("Back to main page", href="/"), style="margin-bottom: 20px;"),
+        Main(
+        Div(H2("Map"), P( Div(id="map", style="height:650px; width:800px; position:relative;"), cls="grid",), ), 
+        Div(H2("Details"), P(
+            P(f"Made at: ", Strong(f"{obs.created_at}")), 
+            P(f"Coordinates (latitude, longitude): ", Strong(f"{obs.latitude:.4f}, {obs.longitude:.4f}")),
+            P(Img(src=f"/static/uploads/{obs.filename}", width="400")), cls="grid",),),
         Script(type="text/javascript", code=observation_js),
-        cls="container")
+    style="display:flex; justify-content:space-between; "))
 
 @rt("/observation/delete/{id}")
 def get(session, id: int):
@@ -170,3 +182,7 @@ def get(session, id: int):
 def main():
     ic("in run")
     serve(host="localhost")
+
+
+if __name__ == "__main__":
+    main()
