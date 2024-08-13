@@ -34,6 +34,10 @@ Observation = observations.dataclass()
 @rt("/")
 def get(session):
     observation_entities = observations(order_by="created_at desc")
+    # if no observations, redirect to new observation page
+    if(len(observation_entities) == 0):
+        return RedirectResponse("/new-observation", status_code=303)
+    
     long_lat_bnds = get_long_lat_bnds(observation_entities)
 
     map_js = get_map_js(observation_entities, long_lat_bnds)
