@@ -4,7 +4,7 @@ from icecream import ic
 from dotenv import load_dotenv
 import os
 import piexif
-from fasthtml_fungi_2.gps_utils import convert_coordinates_to_geojson
+from fasthtml_fungi_2.utils import convert_coordinates_to_geojson, get_map_js, get_long_lat_bnds
 
 
 load_dotenv()
@@ -28,17 +28,27 @@ Observation = observations.dataclass()
 
 @rt("/")
 def get(session):
+    observation_entities = observations(order_by="created_at desc")
+    long_lat_bnds = get_long_lat_bnds(observation_entities)
+
+    map_js = get_map_js(observation_entities, long_lat_bnds)
+
     return Title("Mushroom 🍄 Map"), Main(
         H1("My Mushroom 🍄 Map"),
         P("The map displays your mushroom observations."),
-        P(A(Button("➕ Click to add new observation"), href="/new-observation")),
-        P("These are the mushroom observations so far:"),
-        Ul(
-            *[Li(f"{obs.species} - {obs.created_at}", 
-                 A("Show on map", href=f"/observation/{obs.id}"), 
-                 A("❌ Delete", href=f"/observation/delete/{obs.id}")) 
-                for obs in observations()]
-            ),
+        Div(
+            Div(
+                P(A(Button("➕ Click to add new observation"), href="/new-observation")),
+                P("These are your mushroom observations so far:"),
+                Ul(
+                    *[Li(f"{obs.species} - {obs.created_at}", 
+                        A("Show on map", href=f"/observation/{obs.id}"), 
+                        A("❌ Delete", href=f"/observation/delete/{obs.id}")) 
+                        for obs in observation_entities]
+                    ),),
+            Div(id="map", style="height:650px; width:800px;"), 
+            style="display:flex; justify-content:space-between; "),
+        Script(type="text/javascript", code=map_js),
     cls="container")
 
 
@@ -84,7 +94,7 @@ async def post(session, photo: str, species: str):
         geojson = convert_coordinates_to_geojson(exif_dict)
         ic(geojson["coordinates"])
 
-        # TODO: set created_at to date from EXIF data
+        # set created_at to date from EXIF data
         exif_date = exif_dict['Exif'][36867].decode()
         # parse exif_date
         exif_date_parsed = datetime.datetime.strptime(exif_date, "%Y:%m:%d %H:%M:%S")
@@ -109,56 +119,7 @@ async def get(fname:str, ext:str):
 @rt("/observation/{id}")
 def get(id:int):
     obs = observations[id]
-
-    observation_js = f"""
-var map = new maplibregl.Map({{
-    container: 'map',
-    style: 'https://tiles.stadiamaps.com/styles/stamen_terrain.json',  // Style URL; see our documentation for more options
-    center: [{obs.longitude}, {obs.latitude}],  // Initial focus coordinate
-    zoom: 14
-}});
-
-maplibregl.setRTLTextPlugin('https://unpkg.com/@mapbox/mapbox-gl-rtl-text@0.2.3/mapbox-gl-rtl-text.min.js');
-map.addControl(new maplibregl.NavigationControl());
-
-var markerCollection = {{
-    "type": "FeatureCollection",
-    "features": [{{
-        "type": "Feature",
-        "geometry": {{
-            "type": "Point",
-            // NOTE: in GeoJSON notation, LONGITUDE comes first. GeoJSON 
-            // uses x, y coordinate notation
-            "coordinates": [{obs.longitude}, {obs.latitude}]
-        }},
-        "properties": {{
-            "title": "Observation 1"
-        }}
-    }}]
-}};
-
-markerCollection.features.forEach(function (point) {{
-    // Since these are HTML markers, we create a DOM element first, which we will later
-    // pass to the Marker constructor.
-    var elem = document.createElement('div');
-    elem.className = 'marker';
-
-    // Now, we construct a marker and set it's coordinates from the GeoJSON. Note the coordinate order.
-    var marker = new maplibregl.Marker(elem);
-    marker.setLngLat(point.geometry.coordinates);
-
-    // You can also create a popup that gets shown when you click on a marker. You can style this using
-    // CSS as well if you so desire. A minimal example is shown. The offset will depend on the height of your image.
-    var popup = new maplibregl.Popup({{ offset: 24, closeButton: false }});
-    popup.setHTML('<div>' + point.properties.title + '</div>');
-
-    // Set the marker's popup.
-    marker.setPopup(popup);
-
-    // Finally, we add the marker to the map.
-    marker.addTo(map);
-}});
-    """
+    observation_js = get_map_js(obs)
 
     return Titled(f"Observation: {obs.species}",
                   
