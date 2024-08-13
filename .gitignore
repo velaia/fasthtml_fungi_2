@@ -11,4 +11,6 @@ wheels/
 .env
 .sesskey
 
-static/uploads/
+static/uploads/*.jpg
+
+data/
