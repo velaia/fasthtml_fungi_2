@@ -67,7 +67,7 @@ var markerCollection = {{
             "coordinates": [{feature.longitude}, {feature.latitude}]
         }},
         "properties": {{
-            "title": "Observation 1"
+            "title": "<a href='/observation/{feature.id}'>{feature.species}</a> - {feature.created_at}"
         }}
     }},"""
 

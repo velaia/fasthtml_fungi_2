@@ -9,6 +9,8 @@ from fasthtml_fungi_2.utils import convert_coordinates_to_geojson, get_map_js, g
 
 load_dotenv()
 
+
+# Website setup, including scripts and styles
 headers = (picolink, MarkdownJS(), HighlightJS(langs=['python', 'javascript', 'html', 'css']), 
            Script(type="text/javascript", src="https://unpkg.com/maplibre-gl@4.0.2/dist/maplibre-gl.js"),
            Link(rel="stylesheet", href="https://unpkg.com/maplibre-gl@4.0.2/dist/maplibre-gl.css"),
@@ -20,12 +22,15 @@ app, rt = fast_app(hdrs=headers)
 setup_toasts(app)
 db = database('data/observation2.db')
 
+
+# Database
 observations = db.t.observations
 if observations not in db.t:
     observations.create(id=int, filename=str, species=str, created_at=str, note=str, longitude=float, latitude=float, pk='id')
 Observation = observations.dataclass()
 
 
+# Routes
 @rt("/")
 def get(session):
     observation_entities = observations(order_by="created_at desc")
@@ -33,8 +38,8 @@ def get(session):
 
     map_js = get_map_js(observation_entities, long_lat_bnds)
 
-    return Title("Mushroom 🍄 Map"), Main(
-        H1("My Mushroom 🍄 Map"),
+    return Title("🍄 Mushroom Map 🍄"), Main(
+        H1("🍄 My Mushroom Map 🍄"),
         P("The map displays your mushroom observations."),
         Div(
             Div(
@@ -42,7 +47,7 @@ def get(session):
                 P("These are your mushroom observations so far:"),
                 Ul(
                     *[Li(f"{obs.species} - {obs.created_at}", 
-                        A("Show on map", href=f"/observation/{obs.id}"), 
+                        A("✍ Details", href=f"/observation/{obs.id}"), 
                         A("❌ Delete", href=f"/observation/delete/{obs.id}")) 
                         for obs in observation_entities]
                     ),),
@@ -121,17 +126,30 @@ def get(id:int):
     obs = observations[id]
     observation_js = get_map_js(obs)
 
-    return Titled(f"Observation: {obs.species}",
+    return Main(H1(f"🍄 Observation: {obs.species} 🍄", id="title"),
                   
         Div(A("Back to main page", href="/"), style="margin-bottom: 20px;"),
         Main(
         Div(H2("Map"), P( Div(id="map", style="height:650px; width:800px; position:relative;"), cls="grid",), ), 
         Div(H2("Details"), P(
+            P(Label("Species: "), Input(type="text", id="species", name="species",
+                                         value=obs.species, hx_post=f"/observation/{obs.id}",
+                                         hx_target="#title", hx_swap="innerHTML")),
             P(f"Made at: ", Strong(f"{obs.created_at}")), 
             P(f"Coordinates (latitude, longitude): ", Strong(f"{obs.latitude:.4f}, {obs.longitude:.4f}")),
-            P(Img(src=f"/static/uploads/{obs.filename}", width="400")), cls="grid",),),
+            P(Img(src=f"/static/uploads/{obs.filename}", width="400")), cls="grid",), ),
         Script(type="text/javascript", code=observation_js),
-    style="display:flex; justify-content:space-between; "))
+    style="display:flex; justify-content:space-between; "), cls="container")
+
+@rt("/observation/{id}")
+def post(id:int, species:str, session):
+    ic(f"adjusting species name to {species}")
+    obs = observations.get(id)
+    ic(obs)
+    obs.species = species
+    observations.update(obs)
+    return f"🍄 {species} 🍄"
+
 
 @rt("/observation/delete/{id}")
 def get(session, id: int):
