@@ -126,7 +126,7 @@ def get(id:int):
     obs = observations[id]
     observation_js = get_map_js(obs)
 
-    return Main(H1(f"🍄 Observation: {obs.species} 🍄", id="title"),
+    return Main(H1(f"🍄 {obs.species} 🍄", id="title"),
                   
         Div(A("Back to main page", href="/"), style="margin-bottom: 20px;"),
         Main(

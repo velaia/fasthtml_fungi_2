@@ -32,7 +32,7 @@ def get_long_lat_bnds(points):
 
 
 def get_map_js(obs, long_lat_bnds=None):
-    bounds = ""
+    bounds, fitBounds = "", ""
 
     # center on the observation or first observation in a list of observations
     if isinstance(obs, list):
@@ -44,6 +44,8 @@ def get_map_js(obs, long_lat_bnds=None):
 
     if len(features) > 1:
         long_lat_bnds = get_long_lat_bnds(features)
+        bounds = f"bounds: [[{long_lat_bnds['min_lon']}, {long_lat_bnds['min_lat']}], [{long_lat_bnds['max_lon']}, {long_lat_bnds['max_lat']}]],"
+        fitBounds = f"fitBoundsOptions: {{ padding: 50, }}"
 
     js = f"""
 var map = new maplibregl.Map({{
@@ -51,9 +53,9 @@ var map = new maplibregl.Map({{
     style: 'https://tiles.stadiamaps.com/styles/{os.getenv('map_style')}.json',  // Style URL; see our documentation for more options
     center: [{center.longitude}, {center.latitude}],  // Initial focus coordinate
     zoom: 13,
-    bounds: [[7.200780555555555, 44.18025], [8.21453611111111, 45.98447222222222]],
+    {bounds}
     <!-- add 70 pixels of padding to the map -->
-    fitBoundsOptions: {{ padding: 50, }}
+    {fitBounds}
     }});
 """
 
