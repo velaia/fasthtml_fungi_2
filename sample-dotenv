@@ -1,0 +1,6 @@
+# Copy this file to .env and adjust the values to your needs
+name=DEV
+secret=SuperSecretDevSecret
+upload_path=static/uploads
+# Stadia Maps style - available styles: https://docs.stadiamaps.com/themes/
+map_style=stamen_terrain
