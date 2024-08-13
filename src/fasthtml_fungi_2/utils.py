@@ -32,6 +32,7 @@ def get_long_lat_bnds(points):
 
 
 def get_map_js(obs, long_lat_bnds=None):
+    bounds = ""
 
     # center on the observation or first observation in a list of observations
     if isinstance(obs, list):
@@ -41,13 +42,23 @@ def get_map_js(obs, long_lat_bnds=None):
         center = obs
         features = [obs]
 
+    if len(features) > 1:
+        long_lat_bnds = get_long_lat_bnds(features)
+
     js = f"""
 var map = new maplibregl.Map({{
     container: 'map',
     style: 'https://tiles.stadiamaps.com/styles/{os.getenv('map_style')}.json',  // Style URL; see our documentation for more options
     center: [{center.longitude}, {center.latitude}],  // Initial focus coordinate
-    zoom: 13
-}});
+    zoom: 13,
+    bounds: [[7.200780555555555, 44.18025], [8.21453611111111, 45.98447222222222]],
+    <!-- add 70 pixels of padding to the map -->
+    fitBoundsOptions: {{ padding: 50, }}
+    }});
+"""
+
+    js += f"""
+
 
 maplibregl.setRTLTextPlugin('https://unpkg.com/@mapbox/mapbox-gl-rtl-text@0.2.3/mapbox-gl-rtl-text.min.js');
 map.addControl(new maplibregl.NavigationControl());
@@ -56,6 +67,8 @@ var markerCollection = {{
     "type": "FeatureCollection",
     "features": ["""
 
+
+    # Add markers for the features to the map
     for feature in features:
         js += f"""
     {{
