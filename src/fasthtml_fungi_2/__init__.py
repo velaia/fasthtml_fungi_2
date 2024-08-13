@@ -43,10 +43,9 @@ def get(session):
         P("The map displays your mushroom observations."),
         Div(
             Div(
-                P(A(Button("➕ Click to add new observation"), href="/new-observation")),
-                P("These are your mushroom observations so far:"),
+                P(A(Button("➕ Click to add new observation"), href="/new-observation"), style="margin-bottom: 3em;"),
                 Ul(
-                    *[Li(f"{obs.species} - {obs.created_at}", 
+                    *[Li(f"{obs.species} - {datetime.datetime.strptime(obs.created_at, '%Y-%m-%dT%H:%M:%S').strftime('%B %d, %Y %I:%M %p')} ", 
                         A("✍ Details", href=f"/observation/{obs.id}"), 
                         A("❌ Delete", href=f"/observation/delete/{obs.id}")) 
                         for obs in observation_entities]
@@ -135,7 +134,7 @@ def get(id:int):
             P(Label("Species: "), Input(type="text", id="species", name="species",
                                          value=obs.species, hx_post=f"/observation/{obs.id}",
                                          hx_target="#title", hx_swap="innerHTML")),
-            P(f"Made at: ", Strong(f"{obs.created_at}")), 
+            P(f"Made at: ", Strong(f"{datetime.datetime.strptime(obs.created_at, '%Y-%m-%dT%H:%M:%S').strftime('%B %d, %Y %I:%M %p')}")),
             P(f"Coordinates (latitude, longitude): ", Strong(f"{obs.latitude:.4f}, {obs.longitude:.4f}")),
             P(Img(src=f"/static/uploads/{obs.filename}", width="400")), cls="grid",), ),
         Script(type="text/javascript", code=observation_js),
