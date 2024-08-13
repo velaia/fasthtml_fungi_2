@@ -11,4 +11,11 @@ Pet project to explore a couple of tools I wanted to explore (for  a while) in c
 
 This application allows users to upload photos of mushrooms they have found. Upon uploading, the app will automatically extract the GPS coordinates from the EXIF data embedded in the photos. Using these coordinates, the app will then display a map highlighting the locations of all the mushroom observations. This feature enables users to easily visualize where different types of mushrooms have been found.
 
+## Installation
 
+* Clone this git repository
+* Make sure to [have rye installed](https://rye.astral.sh/guide/installation/) (together with `uv` it's pip on steroids (and more)!)
+* `cd fasthtml_fungi_2` into the cloned repository
+* `cp sample-dotenv .env` and adjust the settings
+* `rye sync`
+* Run the program with `rye run fasthtml-fungi-2` and open the [displayed URL](http://localhost:5001) in your browser to add your first mushroom observation
