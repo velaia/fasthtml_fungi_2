@@ -32,7 +32,7 @@ Observation = observations.dataclass()
 
 # Routes
 @rt("/")
-async def get(session):
+async def get(session, request: Request):
     observation_entities = observations(order_by="created_at desc")
     # if no observations, redirect to new observation page
     if(len(observation_entities) == 0):
@@ -89,7 +89,7 @@ async def get(session):
 
 
 @rt("/new-observation")
-async def post(session, photo: str, species: str):
+async def post(photo: str, species: str, sess):
     try:
         photo_content = await photo.read()
         file_path = os.path.join(".", "static/uploads", photo.filename)
@@ -110,12 +110,13 @@ async def post(session, photo: str, species: str):
         obs = Observation(filename=photo.filename, created_at=exif_date_parsed, species=species,
                         note="New observation", longitude=geojson['coordinates'][1], latitude=geojson['coordinates'][0])
         observations.insert(obs)
-        add_toast(session, "Photo upload successful", "success")
+        add_toast(sess, "Photo upload successful", "success")
     except Exception as e:
-        add_toast(session, f"Error: {e}", "error")
-        return Title("Error"), Main(H1("Error"), P(f"Error: {e}"),
-                                    P( A("Back to main page", href="/")),
-                                    cls="container")
+        add_toast(sess, f"Error: {e}", "error")
+        sess['error'] = "something went wrong"
+        # return Title("Error"), Main(H1("Error"), P(f"Error: {e}"),
+        #                             P( A("Back to main page", href="/")),
+        #                             cls="container")
 
     return RedirectResponse("/", status_code=303)
 
@@ -125,7 +126,7 @@ async def get(fname:str, ext:str):
     return FileResponse(f'static/uploads/{fname}.{ext}')
 
 @rt("/observation/{id}")
-async def get(id:int):
+async def get(id:int, sess):
     obs = observations[id]
     observation_js = get_map_js(obs)
 

@@ -58,6 +58,6 @@ This is a pet project of mine to explore a couple of tools I've been wanting to 
 * [x] Add LICENSE
 * [x] Complete pyproject.toml with relevant meta data
 * [ ] Add footer (to all pages!)
-* [ ] Investigate issue with toasts [and session](https://github.com/AnswerDotAI/fasthtml/issues/247)
+* [x] Investigate issue with toasts [and session](https://github.com/AnswerDotAI/fasthtml/issues/247); [new issue created](https://github.com/AnswerDotAI/fasthtml/issues/297)
 * [ ] Test rye build; how could it be used to distribute the app through PyPI as standalone app?
 * [ ] Add version increment to project (e.g. [python-versioneer](https://github.com/python-versioneer/python-versioneer) or [bump-my-version](https://github.com/callowayproject/bump-my-version))
