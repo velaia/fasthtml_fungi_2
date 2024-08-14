@@ -1,6 +1,6 @@
 # fasthtml-fungi-2 - Personal Fungi
 
-Pet project to explore a couple of tools I wanted to explore (for  a while) in combination with 🍄 mushrooms🍄:
+Pet project to explore a couple of tools I've been wanting to explore for a while in combination with 🍄 mushrooms 🍄.
 * [Answer.ai's FastHTML](https://fastht.ml/)
 * [Rye: a Hassle-Free Python Experience](https://rye.astral.sh/)
 * [GitHub Copilot](https://github.com/features/copilot)
@@ -13,9 +13,10 @@ This application allows users to upload photos of mushrooms they have found. Upo
 
 ## Installation
 
+* Clone this git repository, e.g. using `git clone --depth 1 https://github.com/velaia/fasthtml_fungi_2`
+
 ### Using Rye
 
-* Clone this git repository
 * Make sure to [have rye installed](https://rye.astral.sh/guide/installation/) (together with `uv` it's pip on steroids (and more)!)
 * `cd fasthtml_fungi_2` into the cloned repository
 * `rye sync`
@@ -24,6 +25,10 @@ This application allows users to upload photos of mushrooms they have found. Upo
 
 ### Using pip
 
+* `cd fasthtml_fungi_2` into the cloned repository
+* `python -m venv .venv && source .venv/bin/activate` to create a virtual environment and activate it
+* `pip install -r requirements.lock` to install the dependencies
+* `python src/fasthtml_fungi_2/__init__.py` to run the program, then open the [displayed URL](http://localhost:5001) in your browser to add your first mushroom observation
 
 ### Using Docker
 
@@ -33,7 +38,7 @@ You can adjust settings in the `.env` file, e.g. [choose a different Stadia Maps
 
 ## TODOs
 * [ ] Motivation
-* [ ] pip installation instructions
+* [x] pip installation instructions
 * [ ] Dockerfile & instructions
 * [ ] What (else) to put in dotfile? Clean up uploads directory config.
 * [ ] Create demo online using railway.app
