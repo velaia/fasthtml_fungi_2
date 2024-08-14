@@ -53,7 +53,7 @@ This is a pet project of mine to explore a couple of tools I've been wanting to 
 * [x] pip installation instructions
 * [ ] Dockerfile & instructions
 * [x] What (else) to put in dotfile? Clean up uploads directory config.
-* ~~[ ] Create demo online using railway.app~~ Map display works on localhost with free plan + user management not included
+* [ ] ~~Create demo online using railway.app~~ Map display works on localhost with free plan + user management not included
 * [ ] Include screenshot or short video of the app
 * [x] Add LICENSE
 * [x] Complete pyproject.toml with relevant meta data
