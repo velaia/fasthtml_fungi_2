@@ -13,7 +13,9 @@ This application allows users to upload photos of mushrooms they have found. Upo
 
 ## Installation
 
-* Clone this git repository, e.g. using `git clone --depth 1 https://github.com/velaia/fasthtml_fungi_2`
+* Clone this git repository, e.g. using `git clone --depth 1 https://github.com/velaia/fasthtml_fungi_2`.
+
+NB: The installation with rye (and uv) seems to be way faster (3.9s compared to 9.2 for pip).
 
 ### Using Rye
 
@@ -50,7 +52,7 @@ This is a pet project of mine to explore a couple of tools I've been wanting to 
 * [x] Motivation
 * [x] pip installation instructions
 * [ ] Dockerfile & instructions
-* [ ] What (else) to put in dotfile? Clean up uploads directory config.
+* [x] What (else) to put in dotfile? Clean up uploads directory config.
 * [ ] Create demo online using railway.app
 * [ ] Include screenshot or short video of the app
 * [x] Add LICENSE
