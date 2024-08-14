@@ -30,7 +30,7 @@ jobs:
         if [ -f requirements.lock ]; then pip install -r requirements.lock; fi
     - name: Install rye
       run: |
-        curl -sSf https://rye.astral.sh/get | bash
+        curl -sSf https://rye.astral.sh/get | RYE_INSTALL_OPTION="--yes" bash
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
