@@ -37,3 +37,6 @@ You can adjust settings in the `.env` file, e.g. [choose a different Stadia Maps
 * [ ] Dockerfile & instructions
 * [ ] What (else) to put in dotfile? Clean up uploads directory config.
 * [ ] Create demo online using railway.app
+* [x] Add LICENSE
+* [ ] Complete pyproject.toml with relevant meta data
+* [ ] Add footer

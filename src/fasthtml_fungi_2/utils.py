@@ -1,4 +1,4 @@
-import json, os
+import os
 
 
 def convert_coordinates_to_geojson(data):
@@ -47,6 +47,7 @@ def get_map_js(obs, long_lat_bnds=None):
         bounds = f"bounds: [[{long_lat_bnds['min_lon']}, {long_lat_bnds['min_lat']}], [{long_lat_bnds['max_lon']}, {long_lat_bnds['max_lat']}]],"
         fitBounds = f"fitBoundsOptions: {{ padding: 50, }}"
 
+    # JS code courtesy Stadia Maps
     js = f"""
 var map = new maplibregl.Map({{
     container: 'map',
@@ -115,7 +116,7 @@ markerCollection.features.forEach(function (point) {{
 
     return js
 
-# Example usage
+# Example EXIF data
 data = {
     'GPS': {
         0: (2, 2, 0, 0),
@@ -131,5 +132,3 @@ data = {
         29: b'2024:08:08'
     }
 }
-
-#  geojson = convert_coordinates_to_geojson(data)
