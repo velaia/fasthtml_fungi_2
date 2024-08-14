@@ -32,7 +32,7 @@ Observation = observations.dataclass()
 
 # Routes
 @rt("/")
-def get(session):
+async def get(session):
     observation_entities = observations(order_by="created_at desc")
     # if no observations, redirect to new observation page
     if(len(observation_entities) == 0):
@@ -125,7 +125,7 @@ async def get(fname:str, ext:str):
     return FileResponse(f'static/uploads/{fname}.{ext}')
 
 @rt("/observation/{id}")
-def get(id:int):
+async def get(id:int):
     obs = observations[id]
     observation_js = get_map_js(obs)
 
@@ -145,7 +145,7 @@ def get(id:int):
     style="display:flex; justify-content:space-between; "), cls="container")
 
 @rt("/observation/{id}")
-def post(id:int, species:str, session):
+async def post(id:int, species:str, session):
     ic(f"adjusting species name to {species}")
     obs = observations.get(id)
     ic(obs)
@@ -155,7 +155,7 @@ def post(id:int, species:str, session):
 
 
 @rt("/observation/delete/{id}")
-def get(session, id: int):
+async def get(session, id: int):
     observations.delete(id)
     add_toast(session, "Observation deleted", "success")
     return RedirectResponse("/")
