@@ -36,7 +36,8 @@ async def get_home(session, request: Request):
     observation_entities = observations(order_by="created_at desc")
     # if no observations, redirect to new observation page
     if(len(observation_entities) == 0):
-        return RedirectResponse("/new-observation", status_code=303)
+        add_toast(session, "No observations found, please add one.", "warning")
+        return await get_new_observation(session=session)
     
     long_lat_bnds = get_long_lat_bnds(observation_entities)
 
@@ -73,8 +74,8 @@ After uploading:
 - A map will be displayed with the location of the observation.
 """
 
-@rt("/new-observation")
-async def get(session):
+@rt("/new-observation", methods=["GET"])
+async def get_new_observation(session):
     # return a Title and page for new observation that includes an image upload
     return Title("New Observation"), Main(
         Div(observation_markdown, cls="marked"),
