@@ -1,15 +1,15 @@
-# fasthtml-fungi-2 - Personal Fungi
-
-Pet project to explore a couple of tools I've been wanting to explore for a while in combination with 🍄 mushrooms 🍄.
-* [Answer.ai's FastHTML](https://fastht.ml/)
-* [Rye: a Hassle-Free Python Experience](https://rye.astral.sh/)
-* [GitHub Copilot](https://github.com/features/copilot)
-* [🍦icecream](https://github.com/gruns/icecream) & [dotenv](https://github.com/theskumar/python-dotenv)
-* [🗺 Stadia Maps](https://www.stadiamaps.com)
+# fasthtml-fungi-2 - My Mushroom Map
 
 ## Description
 
 This application allows users to upload photos of mushrooms they have found. Upon uploading, the app will automatically extract the GPS coordinates from the EXIF data embedded in the photos. Using these coordinates, the app will then display a map highlighting the locations of all the mushroom observations. This feature enables users to easily visualize where different types of mushrooms have been found.
+
+![Home screen preview](static/assets/preview-home.webp)
+*Sample overview map*
+
+
+![Mushroom observation screen preview](static/assets/preview-observation.webp)
+*Sample of a mushroom observation page*
 
 ## Installation
 
@@ -36,12 +36,23 @@ This application allows users to upload photos of mushrooms they have found. Upo
 You can adjust settings in the `.env` file, e.g. [choose a different Stadia Maps theme](https://docs.stadiamaps.com/themes/).
 
 
+## Technology
+
+This is a pet project of mine to explore a couple of tools I've been wanting to explore for a while in combination with my interest in 🍄 mushrooms 🍄.
+* [Answer.ai's FastHTML](https://fastht.ml/)
+* [Rye: a Hassle-Free Python Experience](https://rye.astral.sh/)
+* [GitHub Copilot](https://github.com/features/copilot)
+* [🍦icecream](https://github.com/gruns/icecream) & [dotenv](https://github.com/theskumar/python-dotenv)
+* [🗺 Stadia Maps](https://www.stadiamaps.com)
+
+
 ## TODOs
-* [ ] Motivation
+* [x] Motivation
 * [x] pip installation instructions
 * [ ] Dockerfile & instructions
 * [ ] What (else) to put in dotfile? Clean up uploads directory config.
 * [ ] Create demo online using railway.app
+* [ ] Include screenshot or short video of the app
 * [x] Add LICENSE
 * [x] Complete pyproject.toml with relevant meta data
 * [ ] Add footer (to all pages!)
