@@ -50,9 +50,11 @@ This is a pet project of mine to explore a couple of tools I've been wanting to 
 
 ## TODOs
 * [ ] Dockerfile & instructions
-* [ ] Add footer (to all pages!)
 * [ ] Test rye build; how could it be used to distribute the app through PyPI as standalone app?
-* [ ] Add version increment to project (e.g. [python-versioneer](https://github.com/python-versioneer/python-versioneer) or [bump-my-version](https://github.com/callowayproject/bump-my-version))
+* [ ] Add Observations section (issues with new tools, libraries that might be solved in tools that have been around for a while and where an ecosystem exists (e.g. page templates, footer, header, paginated tables, ...); advantages of rye/uv)
+* [ ] ~~Add footer (to all pages!)~~
+* [ ] ~~Add version increment to project (e.g. [python-versioneer](https://github.com/python-versioneer/python-versioneer) or [bump-my-version](https://github.com/callowayproject/bump-my-version))~~
+* [ ] ~~New observation in modal [DialogX](https://docs.fastht.ml/api/xtend.html#dialogx)~~
 * [x] Motivation
 * [x] pip installation instructions
 * [x] What (else) to put in dotfile? Clean up uploads directory config.
