@@ -28,6 +28,9 @@ jobs:
         python -m pip install --upgrade pip
         pip install flake8 pytest
         if [ -f requirements.lock ]; then pip install -r requirements.lock; fi
+    - name: Install rye
+      run: |
+        curl -sSf https://rye.astral.sh/get | bash
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
