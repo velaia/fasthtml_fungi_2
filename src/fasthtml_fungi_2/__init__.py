@@ -83,12 +83,11 @@ async def get(session):
             Input(id="photo", type="file", name="photo"),
             Button("Add", type="submit"),
             action="/new-observation", method="POST", enctype="multipart/form-data", accept="image/*",
-            hx_post="/new-observation", hx_target="main", hx_swap="outerHTML"
         ),
     cls="container")
 
 
-@rt("/new-observation")
+@rt("/new-observation", methods=["POST"])
 async def post(photo: str, species: str, sess, request: Request):
     try:
         photo_content = await photo.read()
@@ -110,10 +109,9 @@ async def post(photo: str, species: str, sess, request: Request):
         obs = Observation(filename=photo.filename, created_at=exif_date_parsed, species=species,
                         note="New observation", longitude=geojson['coordinates'][1], latitude=geojson['coordinates'][0])
         observations.insert(obs)
-        add_toast(sess, "Photo upload successful", "success")
+        add_toast(sess, "Observation created successfully", "success")
     except Exception as e:
-        add_toast(sess, f"Error: {e}", "error")
-        sess['error'] = "something went wrong"
+        add_toast(sess, f"Observation could not be added: {e}", "error")
 
     return await get_home(session=sess, request=request)
 
