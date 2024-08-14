@@ -92,7 +92,7 @@ async def get(session):
 async def post(session, photo: str, species: str):
     try:
         photo_content = await photo.read()
-        file_path = os.path.join(".", os.getenv('upload_path'), photo.filename)
+        file_path = os.path.join(".", "static/uploads", photo.filename)
         with open(file_path, "wb") as output:
             output.write(photo_content)
 
