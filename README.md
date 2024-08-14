@@ -49,15 +49,15 @@ This is a pet project of mine to explore a couple of tools I've been wanting to 
 
 
 ## TODOs
-* [x] Motivation
-* [x] pip installation instructions
 * [ ] Dockerfile & instructions
-* [x] What (else) to put in dotfile? Clean up uploads directory config.
-* [x] ~~Create demo online using railway.app~~ Map display works on localhost with free plan + user management not included
-* [ ] Include screenshot or short video of the app
-* [x] Add LICENSE
-* [x] Complete pyproject.toml with relevant meta data
 * [ ] Add footer (to all pages!)
-* [x] Investigate issue with toasts [and session](https://github.com/AnswerDotAI/fasthtml/issues/247); [new issue created](https://github.com/AnswerDotAI/fasthtml/issues/297)
 * [ ] Test rye build; how could it be used to distribute the app through PyPI as standalone app?
 * [ ] Add version increment to project (e.g. [python-versioneer](https://github.com/python-versioneer/python-versioneer) or [bump-my-version](https://github.com/callowayproject/bump-my-version))
+* [x] Motivation
+* [x] pip installation instructions
+* [x] What (else) to put in dotfile? Clean up uploads directory config.
+* [x] ~~Create demo online using railway.app~~ Map display works on localhost with free plan + user management not included
+* [x] Include screenshot or short video of the app
+* [x] Add LICENSE
+* [x] Complete pyproject.toml with relevant meta data
+* [x] Investigate issue with toasts [and session](https://github.com/AnswerDotAI/fasthtml/issues/247); [new issue created](https://github.com/AnswerDotAI/fasthtml/issues/297)
