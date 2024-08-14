@@ -27,7 +27,7 @@ colorama==0.4.6
     # via icecream
 executing==2.0.1
     # via icecream
-fastcore==1.6.7
+fastcore==1.6.9
     # via fastlite
     # via python-fasthtml
     # via sqlite-minutils
@@ -61,7 +61,7 @@ python-dateutil==2.9.0.post0
     # via python-fasthtml
 python-dotenv==1.0.1
     # via uvicorn
-python-fasthtml==0.3.3
+python-fasthtml==0.3.6
     # via fasthtml-fungi-2
 python-multipart==0.0.9
     # via python-fasthtml

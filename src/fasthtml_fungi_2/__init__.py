@@ -31,8 +31,8 @@ Observation = observations.dataclass()
 
 
 # Routes
-@rt("/")
-async def get(session, request: Request):
+@rt("/", methods=["GET"])
+async def get_home(session, request: Request):
     observation_entities = observations(order_by="created_at desc")
     # if no observations, redirect to new observation page
     if(len(observation_entities) == 0):
@@ -47,11 +47,13 @@ async def get(session, request: Request):
         P("The map displays your mushroom observations."),
         Div(
             Div(
-                P(A(Button("➕ Click to add new observation"), href="/new-observation"), style="margin-bottom: 3em;"),
+                P(A(Button("➕ Click to add new observation"), href="/new-observation", hx_get='/new-observation', hx_target="main",
+                    hx_swap="outerHTML"), 
+                  style="margin-bottom: 3em;"),
                 Ul(
                     *[Li(f"{obs.species} - {datetime.datetime.strptime(obs.created_at, '%Y-%m-%dT%H:%M:%S').strftime('%B %d, %Y %I:%M %p')} ", 
                         A("✍ Details", href=f"/observation/{obs.id}"), 
-                        A("❌ Delete", href=f"/observation/delete/{obs.id}")) 
+                        A("❌ Delete", hx_get=f"/observation/delete/{obs.id}", hx_swap="delete", hx_target="closest li")) 
                         for obs in observation_entities]
                     ),),
             Div(id="map", style="height:650px; width:800px;"), 
@@ -77,19 +79,17 @@ async def get(session):
     return Title("New Observation"), Main(
         Div(observation_markdown, cls="marked"),
         Form(
-            Input(id="species", type="text", name="species", placeholder="Species name"),
+            Input(id="species", type="text", name="species", placeholder="Species name", required=True),
             Input(id="photo", type="file", name="photo"),
-            Button("Submit", type="submit"),
-            action="/new-observation",
-            method="POST",
-            enctype="multipart/form-data",
-            accept="image/*",
+            Button("Add", type="submit"),
+            action="/new-observation", method="POST", enctype="multipart/form-data", accept="image/*",
+            hx_post="/new-observation", hx_target="main", hx_swap="outerHTML"
         ),
     cls="container")
 
 
 @rt("/new-observation")
-async def post(photo: str, species: str, sess):
+async def post(photo: str, species: str, sess, request: Request):
     try:
         photo_content = await photo.read()
         file_path = os.path.join(".", "static/uploads", photo.filename)
@@ -97,7 +97,7 @@ async def post(photo: str, species: str, sess):
             output.write(photo_content)
 
         exif_dict = piexif.load(file_path)
-        assert 'GPS' in exif_dict, "No GPS data in the image metadata"
+        assert 'GPS' in exif_dict, "No GPS data in the image metadata, please try another image."
 
         geojson = convert_coordinates_to_geojson(exif_dict)
         ic(geojson["coordinates"])
@@ -114,11 +114,8 @@ async def post(photo: str, species: str, sess):
     except Exception as e:
         add_toast(sess, f"Error: {e}", "error")
         sess['error'] = "something went wrong"
-        # return Title("Error"), Main(H1("Error"), P(f"Error: {e}"),
-        #                             P( A("Back to main page", href="/")),
-        #                             cls="container")
 
-    return RedirectResponse("/", status_code=303)
+    return await get_home(session=sess, request=request)
 
 
 @rt("/static/uploads/{fname:path}.{ext:static}")
@@ -137,8 +134,7 @@ async def get(id:int, sess):
         Div(H2("Map"), P( Div(id="map", style="height:650px; width:800px; position:relative;"), cls="grid",), ), 
         Div(H2("Details"), P(
             P(Label("Species: "), Input(type="text", id="species", name="species",
-                                         value=obs.species, hx_post=f"/observation/{obs.id}",
-                                         hx_target="#title", hx_swap="innerHTML")),
+                                         value=obs.species, hx_post=f"/observation/{obs.id}",)),
             P(f"Made at: ", Strong(f"{datetime.datetime.strptime(obs.created_at, '%Y-%m-%dT%H:%M:%S').strftime('%B %d, %Y %I:%M %p')}")),
             P(f"Coordinates (latitude, longitude): ", Strong(f"{obs.latitude:.4f}, {obs.longitude:.4f}")),
             P(Img(src=f"/static/uploads/{obs.filename}", width="400")), cls="grid",), ),
@@ -152,14 +148,14 @@ async def post(id:int, species:str, session):
     ic(obs)
     obs.species = species
     observations.update(obs)
-    return f"🍄 {species} 🍄"
+    add_toast(session, "Species name updated", "success")   
 
 
-@rt("/observation/delete/{id}")
-async def get(session, id: int):
+@rt("/observation/delete/{id}", methods=["GET"])
+async def get(session, id: int, request: Request):
     observations.delete(id)
     add_toast(session, "Observation deleted", "success")
-    return RedirectResponse("/")
+    # return await get_home(session=session, request=request)
 
 
 def main():
