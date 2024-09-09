@@ -32,8 +32,6 @@ NB: The installation with uv is way faster.
 * `pip install -r requirements.txt && pip install -e ./` to install the dependencies
 * `python src/fasthtml_fungi_2/__init__.py` to run the program, then open the [displayed URL](http://localhost:5001) in your browser to add your first mushroom observation
 
-### Using Docker
-
 ## Configuration
 You can adjust settings in the `.env` file, e.g. [choose a different Stadia Maps theme](https://docs.stadiamaps.com/themes/).
 
@@ -49,13 +47,7 @@ This is a pet project of mine to explore a couple of tools I've been wanting to 
 
 
 ## TODOs
-* [ ] Dockerfile & instructions
-* [ ] Add Observations section (issues with new tools, libraries that might be solved in tools that have been around for a while and where an ecosystem exists (e.g. page templates, footer, header, paginated tables, ...); advantages of rye/uv)
-* [ ] ~~Test rye build; how could it be used to distribute the app through PyPI as standalone app?~~
 * [x] switch to uv from rye ([see blog post](https://lucumr.pocoo.org/2024/8/21/harvest-season/))
-* [ ] ~~Add footer (to all pages!)~~
-* [ ] ~~Add version increment to project (e.g. [python-versioneer](https://github.com/python-versioneer/python-versioneer) or [bump-my-version](https://github.com/callowayproject/bump-my-version))~~
-* [ ] ~~New observation in modal [DialogX](https://docs.fastht.ml/api/xtend.html#dialogx)~~
 * [x] Motivation
 * [x] pip installation instructions
 * [x] What (else) to put in dotfile? Clean up uploads directory config.
