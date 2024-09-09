@@ -60,7 +60,7 @@ async def get_home(session, request: Request):
             Div(id="map", style="height:650px; width:800px;"), 
             style="display:flex; justify-content:space-between; "),
         Script(type="text/javascript", code=map_js),
-    cls="container")
+    cls="container",)
 
 
 observation_markdown = """
